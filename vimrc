@@ -1,6 +1,6 @@
 execute pathogen#infect()
 "My preferences
-filetype plugin indent on
+filetype plugin on
 syntax on
 colorscheme jay
 set colorcolumn=120
@@ -11,6 +11,7 @@ map <leader>s :source ~/.vimrc<CR>
 filetype indent on
 set nowrap
 set tabstop=4
+set shiftwidth=4
 set autoindent
 "Remove whitespace on save
 autocmd BufWritePre * :%s/\s\+$//e
@@ -18,3 +19,92 @@ autocmd BufWritePre * :%s/\s\+$//e
 set hlsearch
 "Show matching parentheses
 set showmatch
+noremap <Leader>r :CommandTFlush<CR>
+set backspace=indent,eol,start
+" Add spaces after comment delimiters by default
+let g:NERDSpaceDelims = 1
+"
+" " Use compact syntax for prettified multi-line comments
+let g:NERDCompactSexyComs = 1
+"
+" " Align line-wise comment delimiters flush left instead of following code
+" indentation
+" let g:NERDDefaultAlign = 'left'
+"
+" " Set a language to use its alternate delimiters by default
+" let g:NERDAltDelims_java = 1
+"
+" " Add your own custom formats or override the defaults
+" let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
+"
+" " Allow commenting and inverting empty lines (useful when commenting a
+" region)
+let g:NERDCommentEmptyLines = 1
+"
+" " Enable trimming of trailing whitespace when uncommenting
+let g:NERDTrimTrailingWhitespace = 1
+"
+" " Lightline enable
+set laststatus=2
+set noshowmode
+let g:lightline = {
+      \ 'colorscheme': 'landscape',
+      \ 'mode_map': { 'c': 'NORMAL' },
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ]
+      \ },
+      \ 'component_function': {
+      \   'modified': 'LightLineModified',
+      \   'readonly': 'LightLineReadonly',
+      \   'fugitive': 'LightLineFugitive',
+      \   'filename': 'LightLineFilename',
+      \   'fileformat': 'LightLineFileformat',
+      \   'filetype': 'LightLineFiletype',
+      \   'fileencoding': 'LightLineFileencoding',
+      \   'mode': 'LightLineMode',
+      \ },
+      \ 'separator': { 'left': '⮀', 'right': '⮂' },
+      \ 'subseparator': { 'left': '⮁', 'right': '⮃' }
+      \ }
+
+function! LightLineModified()
+	return &ft =~ 'help\|vimfiler\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
+endfunction
+
+function! LightLineReadonly()
+	return &ft !~? 'help\|vimfiler\|gundo' && &readonly ? '⭤' : ''
+endfunction
+
+function! LightLineFilename()
+	return ('' != LightLineReadonly() ? LightLineReadonly() . ' ' : '') .
+		\ (&ft == 'vimfiler' ? vimfiler#get_status_string() :
+        \  &ft == 'unite' ? unite#get_status_string() :
+		\  &ft == 'vimshell' ? vimshell#get_status_string() :
+		\ '' != expand('%:t') ? expand('%:t') : '[No Name]') .
+		\ ('' != LightLineModified() ? ' ' . LightLineModified() : '')
+endfunction
+
+function! LightLineFugitive()
+	if &ft !~? 'vimfiler\|gundo' && exists("*fugitive#head")
+		let branch = fugitive#head()
+		return branch !=# '' ? '⭠ '.branch : ''
+	endif
+	return ''
+endfunction
+
+function! LightLineFileformat()
+	return winwidth(0) > 70 ? &fileformat : ''
+endfunction
+
+function! LightLineFiletype()
+	return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
+endfunction
+
+function! LightLineFileencoding()
+	return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
+endfunction
+
+function! LightLineMode()
+	return winwidth(0) > 60 ? lightline#mode() : ''
+endfunction
+
