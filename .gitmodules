@@ -7,3 +7,6 @@
 [submodule "/Users/matthewbritt/.vim/bundle/lightline.vim"]
 	path = /Users/matthewbritt/.vim/bundle/lightline.vim
 	url = https://github.com/itchyny/lightline.vim
+[submodule "/Users/matthewbritt/.vim/bundle/supertab"]
+	path = /Users/matthewbritt/.vim/bundle/supertab
+	url = git@github.com:ervandew/supertab.git
