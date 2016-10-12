@@ -8,16 +8,20 @@ set number
 let mapleader=" "
 map <leader>s :source ~/.vimrc<CR>
 nnoremap <silent> <Space> :nohlsearch<Bar>:echo<CR>
+set cursorline
 "Optimisations for moar power!
 filetype indent on
 set nowrap
 set tabstop=4
 set shiftwidth=4
 set autoindent
+set mouse=a
 "Remove whitespace on save
 autocmd BufWritePre * :%s/\s\+$//e
 "Search customisations
 set hlsearch
+set incsearch
+set ignorecase
 "Show matching parentheses
 set showmatch
 noremap <Leader>r :CommandTFlush<CR>
@@ -35,7 +39,7 @@ let g:NERDTrimTrailingWhitespace = 1
 " " Lightline enable
 set laststatus=2
 set noshowmode
-
+"
 let g:lightline = {
 	\ 'colorscheme': 'wombat',
 	\ 'active': {
