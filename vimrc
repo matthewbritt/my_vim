@@ -5,8 +5,9 @@ syntax on
 colorscheme jay
 set colorcolumn=120
 set number
-let mapleader=","
+let mapleader=" "
 map <leader>s :source ~/.vimrc<CR>
+nnoremap <silent> <Space> :nohlsearch<Bar>:echo<CR>
 "Optimisations for moar power!
 filetype indent on
 set nowrap
@@ -21,90 +22,80 @@ set hlsearch
 set showmatch
 noremap <Leader>r :CommandTFlush<CR>
 set backspace=indent,eol,start
+"
 " Add spaces after comment delimiters by default
 let g:NERDSpaceDelims = 1
-"
 " " Use compact syntax for prettified multi-line comments
 let g:NERDCompactSexyComs = 1
-"
-" " Align line-wise comment delimiters flush left instead of following code
-" indentation
-" let g:NERDDefaultAlign = 'left'
-"
-" " Set a language to use its alternate delimiters by default
-" let g:NERDAltDelims_java = 1
-"
-" " Add your own custom formats or override the defaults
-" let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
-"
-" " Allow commenting and inverting empty lines (useful when commenting a
-" region)
+" " Allow commenting and inverting empty lines (useful when commenting a region)
 let g:NERDCommentEmptyLines = 1
-"
 " " Enable trimming of trailing whitespace when uncommenting
 let g:NERDTrimTrailingWhitespace = 1
 "
 " " Lightline enable
 set laststatus=2
 set noshowmode
+
 let g:lightline = {
-      \ 'colorscheme': 'landscape',
-      \ 'mode_map': { 'c': 'NORMAL' },
-      \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ]
-      \ },
-      \ 'component_function': {
-      \   'modified': 'LightLineModified',
-      \   'readonly': 'LightLineReadonly',
-      \   'fugitive': 'LightLineFugitive',
-      \   'filename': 'LightLineFilename',
-      \   'fileformat': 'LightLineFileformat',
-      \   'filetype': 'LightLineFiletype',
-      \   'fileencoding': 'LightLineFileencoding',
-      \   'mode': 'LightLineMode',
-      \ },
-      \ 'separator': { 'left': '⮀', 'right': '⮂' },
-      \ 'subseparator': { 'left': '⮁', 'right': '⮃' }
-      \ }
+	\ 'colorscheme': 'wombat',
+	\ 'active': {
+	\ 	'left': [
+	\				[
+	\					'mode', 'paste'
+	\				],
+	\   	      	[
+	\					'fugitive', 'filename'
+	\				]
+	\			]
+	\ },
+	\ 'component_function': {
+	\   'fugitive': 'LightLineFugitive',
+	\   'readonly': 'LightLineReadOnly',
+	\   'modified': 'LightLineModified',
+	\   'filename': 'LightLineFilename'
+	\ },
+	\ 'separator': {
+	\   'left': '⮀',
+	\	'right': '⮂'
+	\ },
+	\ 'subseparator': {
+	\	'left': '⮁',
+	\	'right': '⮃'
+	\ }
+\}
+
+function! LightLineReadOnly()
+	if &filetype == "help"
+		return ""
+	elseif &readonly
+		return "⭤"
+	else
+		return ""
+	endif
+endfunction
 
 function! LightLineModified()
-	return &ft =~ 'help\|vimfiler\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
-endfunction
-
-function! LightLineReadonly()
-	return &ft !~? 'help\|vimfiler\|gundo' && &readonly ? '⭤' : ''
-endfunction
-
-function! LightLineFilename()
-	return ('' != LightLineReadonly() ? LightLineReadonly() . ' ' : '') .
-		\ (&ft == 'vimfiler' ? vimfiler#get_status_string() :
-        \  &ft == 'unite' ? unite#get_status_string() :
-		\  &ft == 'vimshell' ? vimshell#get_status_string() :
-		\ '' != expand('%:t') ? expand('%:t') : '[No Name]') .
-		\ ('' != LightLineModified() ? ' ' . LightLineModified() : '')
+	if &filetype == "help"
+		return ""
+	elseif &modified
+		return "+"
+	elseif &modifiable
+		return ""
+	else
+		return ""
+	endif
 endfunction
 
 function! LightLineFugitive()
-	if &ft !~? 'vimfiler\|gundo' && exists("*fugitive#head")
+	if exists("*fugitive#head")
 		let branch = fugitive#head()
 		return branch !=# '' ? '⭠ '.branch : ''
 	endif
 	return ''
 endfunction
 
-function! LightLineFileformat()
-	return winwidth(0) > 70 ? &fileformat : ''
+function! LightLineFilename()
+	return ('' != LightLineReadOnly() ? LightLineReadOnly() . ' ' : '') .
+		 \ ('' != expand('%:t') ? expand('%:t') : '[No Name]') .
+		 \ ('' != LightLineModified() ? ' ' . LightLineModified() : '')
 endfunction
-
-function! LightLineFiletype()
-	return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
-endfunction
-
-function! LightLineFileencoding()
-	return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
-endfunction
-
-function! LightLineMode()
-	return winwidth(0) > 60 ? lightline#mode() : ''
-endfunction
-
